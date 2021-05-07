@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: harrijin-final-redis-service
+    labels:
+        username: harrijin
+spec:
+    type: ClusterIP
+    selector:
+        app: harrijin-final-redis
+    ports:
+      - name: harrijin-final-redis
+        port: 6379
+        targetPort: 6379
+

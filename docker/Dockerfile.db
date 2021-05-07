@@ -1,2 +1,4 @@
 FROM redis:6.2.1
+COPY ./redis-data/redis.conf /redis.conf
+COPY ./redis-data/data /data
 CMD ["redis-server", "/redis.conf"]

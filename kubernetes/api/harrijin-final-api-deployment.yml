@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: harrijin-final-api-deployment
+    labels:
+        username: harrijin
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: harrijin-final-api
+    template:
+        metadata:
+            labels:
+                username: harrijin
+                app: harrijin-final-api
+        spec:
+            containers:
+              - name: harrijin-final-api
+                image: harrijin/pandemic-mobility-api:latest
+                imagePullPolicy: Always
+                env:
+                  - name: REDIS_IP
+                    value: "10.96.187.10"
+                ports:
+                  - containerPort: 5000

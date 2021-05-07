@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: harrijin-final-redis-deployment
+    labels:
+        username: harrijin
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: harrijin-final-redis
+    template:
+        metadata:
+            labels:
+                username: harrijin
+                app: harrijin-final-redis
+        spec:
+            containers:
+              - name: harrijin-final-redis
+                image: harrijin/pandemic-mobility-db:latest
+                imagePullPolicy: Always
+                # volumeMounts:
+                #   - name: harrijin-final-redis-data
+                #     mountPath: "/data"
+            # volumes:
+            #   - name: harrijin-final-redis-data
+            #     persistentVolumeClaim: 
+            #         claimName: harrijin-final-redis-data

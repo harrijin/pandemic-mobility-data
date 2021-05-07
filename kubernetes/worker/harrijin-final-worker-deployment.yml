@@ -2,30 +2,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: harrijin-test-worker-deployment
+    name: harrijin-final-worker-deployment
     labels:
         username: harrijin
-        env: test
 spec:
     replicas: 2
     selector:
         matchLabels:
-            app: harrijin-test-worker
+            app: harrijin-final-worker
     template:
         metadata:
             labels:
                 username: harrijin
-                env: test
-                app: harrijin-test-worker
+                app: harrijin-final-worker
         spec:
             containers:
-              - name: harrijin-test-worker-pod
-                image: harrijin/flask:latest
-                command: ["python3"]
-                args: ["worker.py"]
+              - name: harrijin-final-worker
+                image: harrijin/pandemic-mobility-wrk:latest
+                imagePullPolicy: Always
                 env:
                   - name: REDIS_IP
-                    value: "10.101.245.196"
+                    value: "10.96.187.10"
                   - name: WORKER_IP
                     valueFrom:
                         fieldRef:
