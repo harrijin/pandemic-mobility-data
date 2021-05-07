@@ -21,12 +21,12 @@ The code in this repository deals with a subset of the full dataset containing a
     "date": string containing the date in the form YYYY-MM-DD,
     "sub_region_1": string containing the state name in Title Case (blank for USA),
     "sub_region_2": string containing the county name in Title Case(can be blank),
-    "retail_and_recreation_percent_change_from_baseline": string with int value between -100 and 100,
-    "grocery_and_pharmacy_percent_change_from_baseline": string with int value between -100 and 100,
-    "parks_percent_change_from_baseline": string with int value between -100 and 100,
-    "transit_percent_change_from_baseline": string with int value between -100 and 100,
-    "workplaces_percent_change_from_baseline": string with int value between -100 and 100,
-    "residential_percent_change_from_baseline": string with int value between -100 and 100
+    "retail_and_recreation_percent_change_from_baseline": string with int value between -100 and 100, or an empty string (denotes missing data),
+    "grocery_and_pharmacy_percent_change_from_baseline": string with int value between -100 and 100, or an empty string (denotes missing data),
+    "parks_percent_change_from_baseline": string with int value between -100 and 100, or an empty string (denotes missing data),
+    "transit_percent_change_from_baseline": string with int value between -100 and 100, or an empty string (denotes missing data),
+    "workplaces_percent_change_from_baseline": string with int value between -100 and 100, or an empty string (denotes missing data),
+    "residential_percent_change_from_baseline": string with int value between -100 and 100, or an empty string (denotes missing data)
 }
 ```
 
@@ -43,6 +43,10 @@ To deploy the API using `docker-compose`, navigate into the root directory of th
 ```
 make compose-up
 ```
+Take down the network with:
+```
+make compose-down
+```
 
 ### Kubernetes
 
@@ -50,15 +54,65 @@ Do the following to deploy the API to a Kubernetes cluster.
 
 ## Using the API
 
-### CRUD operations
+The examples in this section assume that the URL of the deployed API is `localhost:5013`. Change the commands to match to your URL accordingly.
+
+### Quickstart
+
+Open `job_request.sh` and change the URL variable. Run `job_request.sh` to submit a job request with the desired parameters.
+
+```
+bash job_request.sh
+```
+
+### Job endpoints
+
+These endpoints allow you to submit an analysis job request, check the status of your job, and download the resulting graph (.png format). The analysis job generates a graph with the given paramters.
+
+- `/new_job` - POST request with job parameters. Keys are `sub_region_1`, `sub_region_2`, `start_date`, `end_date`, and `interested_categories`. All are required but any can be empty strings. Returns a JSON object with job information. 
+
+```
+$ curl -X POST -H 'content-type: application/json' --data '{"sub_region_1": "usa", "sub_region_2": "", "start_date": "", "end_date": "", "interested_categories": ["retail_and_recreation_percent_change_from_baseline","grocery_and_pharmacy_percent_change_from_baseline","parks_percent_change_from_baseline"]}' localhost:5013/new_job
+
+{
+  "end_date": "", 
+  "id": "205142fc-c86a-4bca-a630-404d2e44fe24", 
+  "interested_categories": "['retail_and_recreation_percent_change_from_baseline', 'grocery_and_pharmacy_percent_change_from_baseline', 'parks_percent_change_from_baseline']", 
+  "start_date": "", 
+  "status": "submitted", 
+  "sub_region_1": "", 
+  "sub_region_2": ""
+}
+```
+
+- `/job/<job_id>` - Returns a JSON object with the status of the job id. Status is either "submitted", "in progress", or "done".
+
+```
+$ curl localhost:5013/job/205142fc-c86a-4bca-a630-404d2e44fe24
+
+{
+  "id": 205142fc-c86a-4bca-a630-404d2e44fe24,
+  "status": "done"
+}
+```
+
+- `/download/<job_id>` - Use to download job result image to a specified file. Once the status of your job is "done", you can download the image.
+
+```
+$ curl localhost:5013/job/205142fc-c86a-4bca-a630-404d2e44fe24 >> output.png
+```
+
+### CRUD endpoints
+
+These endpoints can be used to change the contents of the database.
 
 - `/create` - POST request with a list of the JSON objects to add. All fields are required (see about the data). Store the datapoints to be added in a `json` file, then hit the endpoint as shown below.
 
 Add three datapoints from `examples/create-example.json` (this is fake data, do not actually use for anything!):
 ```
 $ curl -X POST -H 'content-type: application/json' -d @./examples/create-example.json localhost:5013/create
-
-3 rows added
+{
+    "response": "3 rows added"
+}
 ```
 
 - `/read/<date>/<state>?county=<county>` - GET request for a particular day and location. Date is in the form `YYYY-MM-DD`. Use `USA` for aggregate nationwide data. County is optional. 
@@ -108,7 +162,9 @@ $ curl localhost:5013/read/2021-05-01/Texas?county=Travis%20County
 Update the three fake datapoints:
 ```
 $ curl -X POST -H 'content-type: application/json' -d @./examples/update-example.json localhost:5013/update
-3 rows updated
+{
+    "response": "3 rows updated"
+}
 ```
 
 You can verify that the three datapoints were updated using the `/read` endpoint.
@@ -118,9 +174,17 @@ You can verify that the three datapoints were updated using the `/read` endpoint
 Delete the three fake datapoints:
 ```
 $ curl localhost:5013/delete/2021-05-01/USA
-__2021-05-01 deleted
+{
+    "response": "__2021-05-01 deleted"
+}
 $ curl localhost:5013/delete/2021-05-02/New%20York
-New York__2021-05-02 deleted
+{
+    "response": "New York__2021-05-02 deleted"
+}
 $ curl localhost:5013/delete/2021-05-01/Texas?county=Travis%20County
-Texas_Travis County_2021-05-01 deleted
+{
+    "response": "Texas_Travis County_2021-05-01 deleted"
+}
 ```
+
+

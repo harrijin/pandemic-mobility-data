@@ -53,7 +53,7 @@ case $yn in
 esac
 categories=${categories%?}
 command="curl -X POST -H 'content-type: application/json' --data '{\"sub_region_1\": \"$state_name\", \"sub_region_2\": \"$county_name\", \"start_date\": \"$start_date\", \"end_date\": \"$end_date\", \"interested_categories\": [$categories]}' $URL/new_job"
-echo "Running command: $command"
+echo -e "Running command: ${PURPLE}$command${NO_COLOR}"
 jid=$(eval $command | jq -r '.id')
 echo ""
 echo -e "Your job id is ${PURPLE}$jid${NO_COLOR}"

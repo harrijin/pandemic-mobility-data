@@ -19,7 +19,7 @@ def create():
             key = row['sub_region_1'] + '_' + row['sub_region_2'] + '_' + row['date']
             redis_helper.add_data_point(key.title(), row)
             counter = counter + 1
-        return "{} rows added".format(counter)
+        return jsonify({"response": "{} rows added".format(counter)})
     except Exception as e:
         return json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)}), 403
 
@@ -47,7 +47,7 @@ def update():
             key = row['sub_region_1'] + '_' + row['sub_region_2'] + '_' + row['date']
             redis_helper.update_data_point(key.title(), row)
             counter = counter + 1
-        return "{} rows updated".format(counter)
+        return jsonify({"response":"{} rows updated".format(counter)})
     except Exception as e:
         return json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)}), 403
 
@@ -65,7 +65,7 @@ def delete(date, state):
         else:
             key = f'{state}__{date}'
     redis_helper.delete_data_point(key)
-    return "{} deleted".format(key)
+    return jsonify({"response":"{} deleted".format(key)})
 
 # Job operations **********************
 
@@ -81,12 +81,12 @@ def new_job():
 def jobs_api(jid):
     job = redis_helper.get_job(jid)
     if len(job) == 0:
-        return "Job ID not found"
+        return jsonify({"response":"Job ID not found"})
     output = {
         "id":jid,
         "status":job[b'status'].decode('utf-8'),
     }
-    return output
+    return jsonify(output)
     
 @app.route('/download/<jid>', methods=['GET'])
 def download(jid):
