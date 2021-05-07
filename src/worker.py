@@ -60,7 +60,7 @@ def human_readable_categories(category):
     
 def generate_plot(dates, all_data, location, categories):
     for i in range(len(categories)):
-        data = [float(data_point[i]) for data_point in all_data]
+        data = [int(data_point[i]) for data_point in all_data]
         plt.plot(dates, data, '-o', label = human_readable_categories(categories[i].strip("'")))
     plt.plot(dates, [0 for i in range(len(dates))], color='black', linewidth='4', label="Baseline")
     plt.xlabel('Date')

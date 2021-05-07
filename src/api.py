@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def home():
-    return "the fuck?"
+    return ";)"
 
 # CRUD Operations*******************
 
@@ -38,8 +38,8 @@ def read(date, state):
             key = f'{state}__{date}'
     return jsonify(redis_helper.get_data_point(key))
 
-@app.route('/update/<date>/<state>', methods=['POST'])
-def update(date, state):
+@app.route('/update', methods=['POST'])
+def update():
     try:
         table = request.get_json(force=True)
         counter = 0

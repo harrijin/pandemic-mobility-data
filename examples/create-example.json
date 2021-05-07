@@ -1,0 +1,35 @@
+[
+    {
+        "date": "2021-05-01", 
+        "grocery_and_pharmacy_percent_change_from_baseline": "-19", 
+        "parks_percent_change_from_baseline": "-33", 
+        "residential_percent_change_from_baseline": "14", 
+        "retail_and_recreation_percent_change_from_baseline": "-29", 
+        "sub_region_1": "", 
+        "sub_region_2": "", 
+        "transit_stations_percent_change_from_baseline": "-49", 
+        "workplaces_percent_change_from_baseline": "-37"
+    },
+    {
+        "date": "2021-05-02", 
+        "grocery_and_pharmacy_percent_change_from_baseline": "-15", 
+        "parks_percent_change_from_baseline": "-25", 
+        "residential_percent_change_from_baseline": "13", 
+        "retail_and_recreation_percent_change_from_baseline": "-26", 
+        "sub_region_1": "New York", 
+        "sub_region_2": "", 
+        "transit_stations_percent_change_from_baseline": "-45", 
+        "workplaces_percent_change_from_baseline": "-36"
+    },
+    {
+        "date": "2021-05-01", 
+        "grocery_and_pharmacy_percent_change_from_baseline": "-32", 
+        "parks_percent_change_from_baseline": "-36", 
+        "residential_percent_change_from_baseline": "27", 
+        "retail_and_recreation_percent_change_from_baseline": "-41", 
+        "sub_region_1": "Texas", 
+        "sub_region_2": "Travis County", 
+        "transit_stations_percent_change_from_baseline": "-52", 
+        "workplaces_percent_change_from_baseline": "-75"
+      }
+]
