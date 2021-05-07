@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: harrijin-test-flask-service
+    labels:
+        username: harrijin
+        env: test
+spec:
+    type: ClusterIP
+    selector:
+        app: harrijin-test-flask
+    ports:
+      - name: harrijin-test-flask
+        port: 5000
+        targetPort: 5000

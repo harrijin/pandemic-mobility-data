@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: harrijin-test-flask-deployment
+    labels:
+        username: harrijin
+        env: test
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: harrijin-test-flask
+    template:
+        metadata:
+            labels:
+                username: harrijin
+                env: test
+                app: harrijin-test-flask
+        spec:
+            containers:
+              - name: harrijin-test-flask-pod
+                image: harrijin/flask:latest
+                command: ["python3"]
+                args: ["api.py"]
+                env:
+                  - name: REDIS_IP
+                    value: "10.101.245.196"
+                  - name: WORKER_IP
+                    valueFrom:
+                        fieldRef:
+                            fieldPath: status.podIP
+                ports:
+                  - containerPort: 5000

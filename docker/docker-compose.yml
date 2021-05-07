@@ -1,0 +1,25 @@
+---
+version: '3'
+services:
+    harrijin-db:
+        image: harrijin/pandemic-mobility-db:latest
+        container_name: harrijin-db
+        volumes:
+            - ../redis-data/redis.conf:/redis.conf
+            - ../redis-data/data/:/data/
+        ports:
+            - 6393:6379
+        # user: "869722:816966"
+        command: ["redis-server", "/redis.conf"]
+    harrijin-api:
+        image: harrijin/pandemic-mobility-api:latest
+        container_name: harrijin-api
+        environment:
+            - REDIS_IP=harrijin-db
+        ports:
+            - 5013:5000
+    harrijin-wrk:
+        image: harrijin/pandemic-mobility-wrk:latest
+        container_name: harrijin-wrk
+        environment:
+            - REDIS_IP=harrijin-db
