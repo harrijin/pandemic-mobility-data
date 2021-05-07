@@ -9,7 +9,7 @@ services:
             - ../redis-data/data/:/data/
         ports:
             - 6393:6379
-        # user: "869722:816966"
+        user: "869722:816966"
         command: ["redis-server", "/redis.conf"]
     harrijin-api:
         image: harrijin/pandemic-mobility-api:latest
