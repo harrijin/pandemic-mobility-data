@@ -14,7 +14,7 @@ The COVID-19 Mobility report describes how mobility has changed in the pandemic 
 >
 >To help you track week-to-week changes, the baseline days never change. These baseline days also don't account for seasonality. For example, visitors to parks typically increase as the weather improves.
 
-The code in this repository deals with a subset of the full dataset consisting only of nationwide, statewide, and county-wide data from the US. The dataset starts on 2/15/2020, and this repository is updated to 4/30/2021. The data has also been filtered to remove fields such as country codes, region codes, FIPS codes, place IDs, etc. An entry in this filtered dataset has the following structure:
+The code in this repository deals with a subset of the full dataset containing all nationwide, statewide, and county-wide data from the US (that Google has). The dataset starts on 2/15/2020, and this repository is updated to 4/30/2021. The data has also been filtered to remove fields such as country codes, region codes, FIPS codes, place IDs, etc. An entry in this filtered dataset has the following structure:
 
 ```
 {
@@ -52,7 +52,7 @@ Do the following to deploy the API to a Kubernetes cluster.
 
 ### CRUD operations
 
-`/create` - POST request with a list of the JSON objects to add. All fields are required (see about the data). Store the datapoints to be added in a `json` file, then hit the endpoint as shown below.
+- `/create` - POST request with a list of the JSON objects to add. All fields are required (see about the data). Store the datapoints to be added in a `json` file, then hit the endpoint as shown below.
 
 Add three datapoints from `examples/create-example.json` (this is fake data, do not actually use for anything!):
 ```
@@ -61,7 +61,7 @@ $ curl -X POST -H 'content-type: application/json' -d @./examples/create-example
 3 rows added
 ```
 
-`/read/<date>/<state>?county=<county>` - GET request for a particular day and location. Date is in the form `YYYY-MM-DD`. Use `USA` for aggregate nationwide data. County is optional. 
+- `/read/<date>/<state>?county=<county>` - GET request for a particular day and location. Date is in the form `YYYY-MM-DD`. Use `USA` for aggregate nationwide data. County is optional. 
 
 Check that the three fake datapoints were added:
 ```
@@ -103,7 +103,7 @@ $ curl localhost:5013/read/2021-05-01/Texas?county=Travis%20County
 }
 ```
 
-`/update` POST request with a list of JSON objects to add. `sub_region_1`, `sub_region_2`, and `date` are required. 
+- `/update` POST request with a list of JSON objects to add. `sub_region_1`, `sub_region_2`, and `date` are required. 
 
 Update the three fake datapoints:
 ```
@@ -113,7 +113,7 @@ $ curl -X POST -H 'content-type: application/json' -d @./examples/update-example
 
 You can verify that the three datapoints were updated using the `/read` endpoint.
 
-`/delete/<date>/<state>?county=<county>` GET request to delete a datapoint. Same parameters as `/read`
+- `/delete/<date>/<state>?county=<county>` GET request to delete a datapoint. Same parameters as `/read`
 
 Delete the three fake datapoints:
 ```
