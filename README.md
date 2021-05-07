@@ -64,7 +64,15 @@ make compose-down
 
 ### Deploying with Kubernetes
 
-Do the following to deploy the API to a Kubernetes cluster. 
+Deploy to Kubernetes using the following commands:
+
+```
+kubectl apply -f kubernetes/db
+kubectl apply -f kubernetes/api
+kubectl apply -f kubernetes/worker
+```
+
+To access the API, you may need a NodePort service, or you can access it through a debug Kubernetes pod (you can clone this repo into the pod or copy desired files into the pod using `kubectl cp`). 
 
 ## Using the API
 
