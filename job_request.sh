@@ -56,7 +56,7 @@ command="curl -X POST -H 'content-type: application/json' --data '{\"sub_region_
 echo "Running command: $command"
 jid=$(eval $command | jq -r '.id')
 echo ""
-echo "Your job id is ${PURPLE}$jid${NO_COLOR}"
+echo -e "Your job id is ${PURPLE}$jid${NO_COLOR}"
 echo "To check the status of your job, run the following command:"
 echo -e "${PURPLE}curl $URL/job/$jid ${NO_COLOR}"
 echo "Once the status of your job is 'done', download your image using the following command:"

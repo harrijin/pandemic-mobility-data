@@ -1,6 +1,7 @@
 from redis_helper import q, update_job_status, get_job, get_data_point, add_image
 import datetime
 import matplotlib.pyplot as plt
+import numpy as np
 
 @q.worker
 def execute_job(jid):
@@ -59,10 +60,15 @@ def human_readable_categories(category):
     return "invalid category"
     
 def generate_plot(dates, all_data, location, categories):
-    for i in range(len(categories)):
-        data = [int(data_point[i]) for data_point in all_data]
-        plt.plot(dates, data, '-o', label = human_readable_categories(categories[i].strip("'")))
     plt.plot(dates, [0 for i in range(len(dates))], color='black', linewidth='4', label="Baseline")
+    for i in range(len(categories)):
+        data = list()
+        for data_point in all_data:
+            if len(data_point[i]) > 0:
+                data.append(int(data_point[i]))
+            else:
+                data.append(np.nan)
+        plt.plot(dates, data, '-o', label = human_readable_categories(categories[i].strip("'")))
     plt.xlabel('Date')
     plt.ylabel('Percent change from baseline')
     plt.title("Mobility data for " + location.title())
