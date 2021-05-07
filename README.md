@@ -1,8 +1,12 @@
 # pandemic-mobility-data
 
-This repository contains the source code for a front-end API for a subset of Google's [COVID-19 Mobility Report](https://www.google.com/covid19/mobility/). The subset contains only data for the United States, and contains data from 2/15/2020 to 4/30/2021. From Google's [overview](https://support.google.com/covid19-mobility/answer/9824897?hl=en&ref_topic=9822927):
+This repository contains the source code for a front-end API for a subset of Google's [COVID-19 Mobility Report](https://www.google.com/covid19/mobility/). 
 
-## About the data
+![Example Image](./examples/example.png)
+
+## About
+
+The COVID-19 Mobility report describes how mobility has changed in the pandemic using Google Maps data. This data is split into 6 categories: retail/recreation, grocery/pharmacy, parks, public transit, workplaces, and residential areas. Each datapoint is normalized to baseline mobility data from just before the pandemic. From Google's [overview](https://support.google.com/covid19-mobility/answer/9824897?hl=en&ref_topic=9822927):
 
 > The data shows how visitors to (or time spent in) categorized places change compared to our baseline days. A baseline day represents a normal value for that day of the week. The baseline day is the median value from the 5‑week period Jan 3 – Feb 6, 2020.
 >
@@ -10,11 +14,25 @@ This repository contains the source code for a front-end API for a subset of Goo
 >
 >To help you track week-to-week changes, the baseline days never change. These baseline days also don't account for seasonality. For example, visitors to parks typically increase as the weather improves.
 
-The files in this repository can be used to build three separate Docker containers: a [front-end Flask API](), a [Redis database](), and a [Python worker node](). These three Docker containers can then be deployed using either the provided `docker-compose` file or Kubernetes configuration files.
+The code in this repository deals with a subset of the full dataset containing all nationwide, statewide, and county-wide data from the US (that Google has). The dataset starts on 2/15/2020, and this repository is updated to 4/30/2021. The data has also been filtered to remove fields such as country codes, region codes, FIPS codes, place IDs, etc. An entry in this filtered dataset has the following structure:
 
-The worker node generates a downloadable graph that shows changes in mobility due to the COVID-19 Pandemic. This graph can be customized to different date ranges, locations (county, statewide, or nationwide), and travel-type (Retail/Recreation, Grocery/Pharmacy, Parks, Public Transit, Workplaces, and Residential Areas).
+```
+{
+    "date": string containing the date in the form YYYY-MM-DD,
+    "sub_region_1": string containing the state name in Title Case (blank for USA),
+    "sub_region_2": string containing the county name in Title Case(can be blank),
+    "retail_and_recreation_percent_change_from_baseline": string with int value between -100 and 100,
+    "grocery_and_pharmacy_percent_change_from_baseline": string with int value between -100 and 100,
+    "parks_percent_change_from_baseline": string with int value between -100 and 100,
+    "transit_percent_change_from_baseline": string with int value between -100 and 100,
+    "workplaces_percent_change_from_baseline": string with int value between -100 and 100,
+    "residential_percent_change_from_baseline": string with int value between -100 and 100
+}
+```
 
-![Example Image](./examples/example.png)
+The files in this repository can be used to build three separate Docker containers: a [front-end Flask API](https://hub.docker.com/repository/docker/harrijin/pandemic-mobility-api), a [Redis database](https://hub.docker.com/repository/docker/harrijin/pandemic-mobility-db), and a [Python worker node](https://hub.docker.com/repository/docker/harrijin/pandemic-mobility-wrk). These three Docker containers can then be deployed using either the provided `docker-compose` file or Kubernetes configuration files.
+
+The worker node generates a downloadable graph that shows changes in mobility due to the COVID-19 Pandemic. This graph can be customized to different date ranges, locations, and mobility type.
 
 ## Deployment Instructions
 
@@ -34,7 +52,7 @@ Do the following to deploy the API to a Kubernetes cluster.
 
 ### CRUD operations
 
-`/create` - POST request with a list of the JSON objects to add. All fields are required (see about the data). Store the datapoints to be added in a `json` file, then hit the endpoint as shown below.
+- `/create` - POST request with a list of the JSON objects to add. All fields are required (see about the data). Store the datapoints to be added in a `json` file, then hit the endpoint as shown below.
 
 Add three datapoints from `examples/create-example.json` (this is fake data, do not actually use for anything!):
 ```
@@ -43,7 +61,7 @@ $ curl -X POST -H 'content-type: application/json' -d @./examples/create-example
 3 rows added
 ```
 
-`/read/<date>/<state>?county=<county>` - GET request for a particular day and location. Date is in the form `YYYY-MM-DD`. Use `USA` for aggregate nationwide data. County is optional. 
+- `/read/<date>/<state>?county=<county>` - GET request for a particular day and location. Date is in the form `YYYY-MM-DD`. Use `USA` for aggregate nationwide data. County is optional. 
 
 Check that the three fake datapoints were added:
 ```
@@ -85,7 +103,7 @@ $ curl localhost:5013/read/2021-05-01/Texas?county=Travis%20County
 }
 ```
 
-`/update` POST request with a list of JSON objects to add. `sub_region_1`, `sub_region_2`, and `date` are required. 
+- `/update` POST request with a list of JSON objects to add. `sub_region_1`, `sub_region_2`, and `date` are required. 
 
 Update the three fake datapoints:
 ```
@@ -95,7 +113,7 @@ $ curl -X POST -H 'content-type: application/json' -d @./examples/update-example
 
 You can verify that the three datapoints were updated using the `/read` endpoint.
 
-`/delete/<date>/<state>?county=<county>` GET request to delete a datapoint. Same parameters as `/read`
+- `/delete/<date>/<state>?county=<county>` GET request to delete a datapoint. Same parameters as `/read`
 
 Delete the three fake datapoints:
 ```
