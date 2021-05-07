@@ -34,9 +34,23 @@ The files in this repository can be used to build three separate Docker containe
 
 The worker node generates a downloadable graph that shows changes in mobility due to the COVID-19 Pandemic. This graph can be customized to different date ranges, locations, and mobility type.
 
-## Deployment Instructions
+## Build and Deployment
 
-### Docker-compose
+### Building the Docker containers
+
+To build all three containers, use
+```
+make build-all
+```
+
+To build the containers individually, use
+```
+make build-api
+make build-db
+make build-wrk
+```
+
+### Deploying with docker-compose
 
 To deploy the API using `docker-compose`, navigate into the root directory of this repository and run the following:
 
@@ -48,7 +62,7 @@ Take down the network with:
 make compose-down
 ```
 
-### Kubernetes
+### Deploying with Kubernetes
 
 Do the following to deploy the API to a Kubernetes cluster. 
 
