@@ -33,30 +33,6 @@ push-wrk:
 	docker push ${NSPACE}/${APP}-wrk:${VER}
 	
 push-all: push-db push-api push-wrk
-# test-db: build-db
-# 	docker run --name ${NSPACE}-db \
-#                    --network ${NSPACE}-network-test \
-#                    -p ${RPORT}:6379 \
-#                    -d \
-#                    -u ${UID}:${GID} \
-#                    -v ${PWD}/data/:/data \
-#                    ${NSPACE}/${APP}-db:${VER}
-
-# test-api: build-api
-# 	docker run --name ${NSPACE}-api \
-#                    --network ${NSPACE}-network-test \
-#                    --env REDIS_IP=${NSPACE}-db \
-#                    -p ${FPORT}:5000 \
-#                    -d \
-#                    ${NSPACE}/${APP}-api:${VER} 
-
-# test-wrk: build-wrk
-# 	docker run --name ${NSPACE}-wrk \
-#                    --network ${NSPACE}-network-test \
-#                    --env REDIS_IP=${NSPACE}-db \
-#                    -d \
-#                    ${NSPACE}/${APP}-wrk:${VER} 
-
 
 clean-db:
 	docker ps -a | grep ${NSPACE}-db | awk '{print $$1}' | xargs docker rm -f
@@ -70,8 +46,6 @@ clean-wrk:
 
 
 build-all: build-db build-api build-wrk
-
-# test-all: test-db test-api test-wrk
 
 clean-all: clean-db clean-api clean-wrk
 
@@ -88,23 +62,8 @@ compose-up:
 compose-down:
 	VER=${VER} docker-compose -f docker/docker-compose.yml -p ${NSPACE} down
 
-
-
-
-# k-test:
-# 	cat kubernetes/test/* | TAG=${VER} envsubst '$${TAG}' | yq | kubectl apply -f -
-
-# k-test-del:
-# 	cat kubernetes/test/*deployment.yml | TAG=${VER} envsubst '$${TAG}' | yq | kubectl delete -f -
-
-
-# k-prod:
-# 	cat kubernetes/prod/* | TAG=${VER} envsubst '$${TAG}' | yq | kubectl apply -f -
-
-# k-prod-del:
-# 	cat kubernetes/prod/*deployment.yml | TAG=${VER} envsubst '$${TAG}' | yq | kubectl delete -f -
-
-
-
-
+k8-apply:
+	kubectl apply -f kubernetes/db
+	kubectl apply -f kubernetes/api
+	kubectl apply -f kubernetes/worker
 

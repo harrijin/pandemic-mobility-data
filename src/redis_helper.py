@@ -71,6 +71,9 @@ def get_image(jid):
 
 # Database operations *************************
 
+def db_size():
+    return db.dbsize()
+
 def add_data_point(key, data):
     db.hmset(key, data)
     return data

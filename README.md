@@ -64,8 +64,12 @@ make compose-down
 
 ### Deploying with Kubernetes
 
-Deploy to Kubernetes using the following commands:
+Deploy to Kubernetes using the following command:
 
+```
+make k8-apply
+```
+or
 ```
 kubectl apply -f kubernetes/db
 kubectl apply -f kubernetes/api
@@ -77,6 +81,22 @@ To access the API, you may need a NodePort service, or you can access it through
 ## Using the API
 
 The examples in this section assume that the URL of the deployed API is `https://isp-proxy.tacc.utexas.edu/harrijin`. Change the commands to match to your URL accordingly.
+
+### Load data
+
+Skip this step if just using Docker (no Kubernetes), as the data is included in the container. If you are using Kubernetes with a persistent volume claim, you will need to load the data into the PVC. Do this with the following command:
+
+```
+wget --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/load_data
+```
+
+Because of the size of the dataset, you will likely timeout (Error 504) before receiving a response from the server. This is fine, as the server will continue loading the data into the dataset. Check how many datapoints are in the dataset with the following command:
+
+```
+wget --no-check-certificate -q -O - https://isp-proxy.tacc.utexas.edu/harrijin/db_size
+```
+
+The base dataset has 1125225 datapoints (See `src/data` for raw data in CSV form). Once this number is reached, the data is done loading in. This should take between 5-10 minutes. 
 
 ### Quickstart
 

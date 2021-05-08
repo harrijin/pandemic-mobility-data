@@ -1,5 +1,6 @@
 #!/bin/bash
 URL="https://isp-proxy.tacc.utexas.edu/harrijin"
+# URL="localhost:5013"
 PURPLE='\033[1;35m'
 NO_COLOR='\033[0m'
 

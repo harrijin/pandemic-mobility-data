@@ -20,10 +20,10 @@ spec:
               - name: harrijin-final-redis
                 image: harrijin/pandemic-mobility-db:latest
                 imagePullPolicy: Always
-                # volumeMounts:
-                #   - name: harrijin-final-redis-data
-                #     mountPath: "/data"
-            # volumes:
-            #   - name: harrijin-final-redis-data
-            #     persistentVolumeClaim: 
-            #         claimName: harrijin-final-redis-data
+                volumeMounts:
+                  - name: harrijin-final-redis-data
+                    mountPath: "/data"
+            volumes:
+              - name: harrijin-final-redis-data
+                persistentVolumeClaim: 
+                    claimName: harrijin-final-redis-data

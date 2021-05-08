@@ -1,12 +1,40 @@
-import json, os
+import json, os, csv
 from flask import Flask, request, send_file, jsonify
 import redis_helper
 
 app = Flask(__name__)
 
+def add_data(table):
+    counter = 0
+    for row in table:
+        key = row['sub_region_1'] + '_' + row['sub_region_2'] + '_' + row['date']
+        redis_helper.add_data_point(key.title(), row)
+        counter = counter + 1
+    return jsonify({"response": "{} rows added".format(counter)})
+
 @app.route('/', methods=['GET'])
 def home():
     return ";)"
+
+@app.route('/db_size')
+def check_db_size():
+    return {"response" : "{} datapoints in database".format(redis_helper.db_size())}
+
+@app.route('/load_data', methods=['GET'])
+def load_data():
+    columns_to_keep = ['sub_region_1', 'sub_region_2', 'date', 'retail_and_recreation_percent_change_from_baseline', 'grocery_and_pharmacy_percent_change_from_baseline', 'parks_percent_change_from_baseline', 'transit_stations_percent_change_from_baseline', 'workplaces_percent_change_from_baseline', 'residential_percent_change_from_baseline']
+
+    table = list()
+    for file in os.listdir('data'):
+        with open('data/' + file, encoding='utf-8') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            for row in csv_reader:
+                # sub_region_1 is state, sub_region_2 is county
+                filtered_row = dict()
+                for column in columns_to_keep:
+                    filtered_row[column] = row[column]
+                table.append(filtered_row)
+    return add_data(table)
 
 # CRUD Operations*******************
 
@@ -14,12 +42,7 @@ def home():
 def create():
     try:
         table = request.get_json(force=True)
-        counter = 0
-        for row in table:
-            key = row['sub_region_1'] + '_' + row['sub_region_2'] + '_' + row['date']
-            redis_helper.add_data_point(key.title(), row)
-            counter = counter + 1
-        return jsonify({"response": "{} rows added".format(counter)})
+        return add_data(table)
     except Exception as e:
         return json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)}), 403
 
