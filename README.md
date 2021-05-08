@@ -4,6 +4,19 @@ This repository contains the source code for a front-end API for a subset of Goo
 
 ![Example Image](./examples/example.png)
 
+## Table of Contents
+
+- [About](#about)
+- [Build and Deployment](#build-and-deployment)
+  * [Building the Docker containers](#building-the-docker-containers)
+  * [Deploying with docker-compose](#deploying-with-docker-compose)
+  * [Deploying with Kubernetes](#deploying-with-kubernetes)
+- [Using the API](#using-the-api)
+  * [Load data](#load-data)
+  * [Quickstart](#quickstart)
+  * [Job endpoints](#job-endpoints)
+  * [CRUD endpoints](#crud-endpoints)
+
 ## About
 
 The COVID-19 Mobility report describes how mobility has changed in the pandemic using Google Maps data. This data is split into 6 categories: retail/recreation, grocery/pharmacy, parks, public transit, workplaces, and residential areas. Each datapoint is normalized to baseline mobility data from just before the pandemic. From Google's [overview](https://support.google.com/covid19-mobility/answer/9824897?hl=en&ref_topic=9822927):
@@ -145,7 +158,9 @@ $ wget -q --no-check-certificate https://isp-proxy.tacc.utexas.edu/harrijin/down
 
 ### CRUD endpoints
 
-These endpoints can be used to change the contents of the database.
+These endpoints can be used to read and change the contents of the database.
+
+- `/db_size` - GET request. Check number of datapoints loaded in database.
 
 - `/create` - POST request with a list of the JSON objects to add. All fields are required (see about the data). Store the datapoints to be added in a `json` file, then hit the endpoint as shown below.
 
