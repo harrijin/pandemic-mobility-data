@@ -1,6 +1,6 @@
 # pandemic-mobility-data
 
-This repository contains the source code for a front-end API for a subset of Google's [COVID-19 Mobility Report](https://www.google.com/covid19/mobility/). 
+This repository contains the source code for a front-end API for a subset of Google's [COVID-19 Mobility Report](https://www.google.com/covid19/mobility/). Currently deployed at `https://isp-proxy.tacc.utexas.edu/harrijin`.
 
 ![Example Image](./examples/example.png)
 
@@ -76,7 +76,7 @@ To access the API, you may need a NodePort service, or you can access it through
 
 ## Using the API
 
-The examples in this section assume that the URL of the deployed API is `localhost:5013`. Change the commands to match to your URL accordingly.
+The examples in this section assume that the URL of the deployed API is `https://isp-proxy.tacc.utexas.edu/harrijin`. Change the commands to match to your URL accordingly.
 
 ### Quickstart
 
@@ -93,7 +93,7 @@ These endpoints allow you to submit an analysis job request, check the status of
 - `/new_job` - POST request with job parameters. Keys are `sub_region_1`, `sub_region_2`, `start_date`, `end_date`, and `interested_categories`. All are required but any can be empty strings. Returns a JSON object with job information. 
 
 ```
-$ curl -X POST -H 'content-type: application/json' --data '{"sub_region_1": "usa", "sub_region_2": "", "start_date": "", "end_date": "", "interested_categories": ["retail_and_recreation_percent_change_from_baseline","grocery_and_pharmacy_percent_change_from_baseline","parks_percent_change_from_baseline"]}' localhost:5013/new_job
+$ wget -q --no-check-certificate -O - --post-data='{"sub_region_1": "usa", "sub_region_2": "", "start_date": "", "end_date": "", "interested_categories": ["retail_and_recreation_percent_change_from_baseline","grocery_and_pharmacy_percent_change_from_baseline","parks_percent_change_from_baseline"]}' https://isp-proxy.tacc.utexas.edu/harrijin/new_job
 
 {
   "end_date": "", 
@@ -106,10 +106,10 @@ $ curl -X POST -H 'content-type: application/json' --data '{"sub_region_1": "usa
 }
 ```
 
-- `/job/<job_id>` - Returns a JSON object with the status of the job id. Status is either "submitted", "in progress", or "done".
+- `/job/<job_id>` - Returns a JSON object with the status of the job id (see above). Status is either "submitted", "in progress", or "done".
 
 ```
-$ curl localhost:5013/job/205142fc-c86a-4bca-a630-404d2e44fe24
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/job/205142fc-c86a-4bca-a630-404d2e44fe24
 
 {
   "id": 205142fc-c86a-4bca-a630-404d2e44fe24,
@@ -120,7 +120,7 @@ $ curl localhost:5013/job/205142fc-c86a-4bca-a630-404d2e44fe24
 - `/download/<job_id>` - Use to download job result image to a specified file. Once the status of your job is "done", you can download the image.
 
 ```
-$ curl localhost:5013/job/205142fc-c86a-4bca-a630-404d2e44fe24 >> output.png
+$ wget -q --no-check-certificate https://isp-proxy.tacc.utexas.edu/harrijin/download/205142fc-c86a-4bca-a630-404d2e44fe24 --output-document=output.png
 ```
 
 ### CRUD endpoints
@@ -131,7 +131,7 @@ These endpoints can be used to change the contents of the database.
 
 Add three datapoints from `examples/create-example.json` (this is fake data, do not actually use for anything!):
 ```
-$ curl -X POST -H 'content-type: application/json' -d @./examples/create-example.json localhost:5013/create
+$ wget -q --no-check-certificate -O - --post-file=./examples/create-example.json https://isp-proxy.tacc.utexas.edu/harrijin/create
 {
     "response": "3 rows added"
 }
@@ -141,7 +141,7 @@ $ curl -X POST -H 'content-type: application/json' -d @./examples/create-example
 
 Check that the three fake datapoints were added:
 ```
-$ curl localhost:5013/read/2021-05-01/USA 
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/read/2021-05-01/USA 
 {
   "date": "2021-05-01", 
   "grocery_and_pharmacy_percent_change_from_baseline": "-19", 
@@ -153,7 +153,7 @@ $ curl localhost:5013/read/2021-05-01/USA
   "transit_stations_percent_change_from_baseline": "-49", 
   "workplaces_percent_change_from_baseline": "-37"
 }
-$ curl localhost:5013/read/2021-05-02/New%20York
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/read/2021-05-02/New%20York
 {
   "date": "2021-05-02", 
   "grocery_and_pharmacy_percent_change_from_baseline": "-15", 
@@ -165,7 +165,7 @@ $ curl localhost:5013/read/2021-05-02/New%20York
   "transit_stations_percent_change_from_baseline": "-45", 
   "workplaces_percent_change_from_baseline": "-36"
 }
-$ curl localhost:5013/read/2021-05-01/Texas?county=Travis%20County
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/read/2021-05-01/Texas?county=Travis%20County
 {
   "date": "2021-05-01", 
   "grocery_and_pharmacy_percent_change_from_baseline": "-32", 
@@ -183,7 +183,7 @@ $ curl localhost:5013/read/2021-05-01/Texas?county=Travis%20County
 
 Update the three fake datapoints:
 ```
-$ curl -X POST -H 'content-type: application/json' -d @./examples/update-example.json localhost:5013/update
+$ wget -q --no-check-certificate -O - --post-file=./examples/update-example.json https://isp-proxy.tacc.utexas.edu/harrijin/update
 {
     "response": "3 rows updated"
 }
@@ -195,18 +195,16 @@ You can verify that the three datapoints were updated using the `/read` endpoint
 
 Delete the three fake datapoints:
 ```
-$ curl localhost:5013/delete/2021-05-01/USA
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/delete/2021-05-01/USA
 {
     "response": "__2021-05-01 deleted"
 }
-$ curl localhost:5013/delete/2021-05-02/New%20York
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/delete/2021-05-02/New%20York
 {
     "response": "New York__2021-05-02 deleted"
 }
-$ curl localhost:5013/delete/2021-05-01/Texas?county=Travis%20County
+$ wget -q --no-check-certificate -O - https://isp-proxy.tacc.utexas.edu/harrijin/delete/2021-05-01/Texas?county=Travis%20County
 {
     "response": "Texas_Travis County_2021-05-01 deleted"
 }
 ```
-
-

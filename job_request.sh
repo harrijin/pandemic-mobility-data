@@ -1,5 +1,5 @@
 #!/bin/bash
-URL="localhost:5013"
+URL="https://isp-proxy.tacc.utexas.edu/harrijin"
 PURPLE='\033[1;35m'
 NO_COLOR='\033[0m'
 
@@ -52,12 +52,14 @@ case $yn in
     [Nn]* ) :;;
 esac
 categories=${categories%?}
-command="curl -X POST -H 'content-type: application/json' --data '{\"sub_region_1\": \"$state_name\", \"sub_region_2\": \"$county_name\", \"start_date\": \"$start_date\", \"end_date\": \"$end_date\", \"interested_categories\": [$categories]}' $URL/new_job"
+command="wget --post-data='{\"sub_region_1\": \"$state_name\", \"sub_region_2\": \"$county_name\", \"start_date\": \"$start_date\", \"end_date\": \"$end_date\", \"interested_categories\": [$categories]}' $URL/new_job --no-check-certificate -q"
 echo -e "Running command: ${PURPLE}$command${NO_COLOR}"
-jid=$(eval $command | jq -r '.id')
+eval $command
+jid=$(cat new_job | jq -r '.id')
+rm new_job
 echo ""
 echo -e "Your job id is ${PURPLE}$jid${NO_COLOR}"
 echo "To check the status of your job, run the following command:"
-echo -e "${PURPLE}curl $URL/job/$jid ${NO_COLOR}"
+echo -e "${PURPLE}wget --no-check-certificate $URL/job/$jid -q -O -${NO_COLOR}"
 echo "Once the status of your job is 'done', download your image using the following command:"
-echo -e "${PURPLE}curl $URL/download/$jid >> output.png ${NO_COLOR}"
+echo -e "${PURPLE}wget --no-check-certificate $URL/download/$jid --output-document=output.png${NO_COLOR}"
