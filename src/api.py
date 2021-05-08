@@ -14,7 +14,7 @@ def add_data(table):
 
 @app.route('/', methods=['GET'])
 def home():
-    return ";)"
+    return "Google's COVID-19 Pandemic Mobility Data API. See https://github.com/harrijin/pandemic-mobility-data for documentation"
 
 @app.route('/db_size')
 def check_db_size():
